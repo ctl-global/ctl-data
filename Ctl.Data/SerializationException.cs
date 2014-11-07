@@ -45,7 +45,7 @@ namespace Ctl.Data
         /// <summary>
         /// The serialized value which caused the exception.
         /// </summary>
-        public string InvalidValue { get; set; }
+        public string InvalidValue { get; private set; }
 
         /// <summary>
         /// Instantiates a new SerializationException.
