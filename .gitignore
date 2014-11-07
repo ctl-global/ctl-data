@@ -1,0 +1,9 @@
+*.suo
+*.user
+*.nupkg
+*.mdf
+*.ldf
+bin
+obj
+/packages/*
+!/packages/repositories.config
