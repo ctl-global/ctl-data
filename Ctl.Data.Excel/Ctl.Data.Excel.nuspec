@@ -6,11 +6,11 @@
     <title>$title$</title>
     <authors>$author$</authors>
     <owners>$author$</owners>
-    <iconUrl>http://nuget.continentalltd.local/ctl-logo.png</iconUrl>
+    <iconUrl>http://ctl-global.github.io/ctl-logo-nuget.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
     <releaseNotes>Initial Release.</releaseNotes>
     <copyright>Copyright 2014 CTL Global, Inc.</copyright>
-    <tags>ctl excel data</tags>
+    <tags>excel data</tags>
   </metadata>
 </package>

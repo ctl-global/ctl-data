@@ -33,9 +33,8 @@
     <DocumentationFile>bin\Release\Ctl.Data.Excel.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Ctl.Data, Version=1.0.5386.28243, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Ctl.Data.1.0.5386.28243\lib\net45\Ctl.Data.dll</HintPath>
+    <Reference Include="Ctl.Data">
+      <HintPath>..\packages\Ctl.Data.1.0.5423.38380\lib\net45\Ctl.Data.dll</HintPath>
     </Reference>
     <Reference Include="EPPlus">
       <HintPath>..\packages\EPPlus.3.1.3.3\lib\net35\EPPlus.dll</HintPath>
