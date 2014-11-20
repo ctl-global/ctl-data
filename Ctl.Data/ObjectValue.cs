@@ -35,7 +35,7 @@ namespace Ctl.Data
     /// A deserialized object value.
     /// </summary>
     /// <typeparam name="T">The type of object deserialized.</typeparam>
-    public sealed class ObjectValue<T>
+    public sealed class ObjectValue<T> : ObjectValue
     {
         /// <summary>
         /// The deserialized object.
@@ -57,38 +57,6 @@ namespace Ctl.Data
                 UnvalidatedValue = value;
             }
         }
-
-        /// <summary>
-        /// The 1-based index of the row in the stream.
-        /// </summary>
-        public long RowNumber { get { return RawValues.RowNumber; } }
-
-        /// <summary>
-        /// The 1-based line index this value started on.
-        /// </summary>
-        public long LineNumber { get { return RawValues.Count != 0 ? RawValues[0].LineNumber : 0; } }
-
-        /// <summary>
-        /// The 1-based column index this value started on.
-        /// Note this counts UTF-16 code units, not grapheme clusters or even code points.
-        /// </summary>
-        public long ColumnNumber { get { return RawValues.Count != 0 ? RawValues[0].ColumnNumber : 0; } }
-
-        /// <summary>
-        /// The raw row values which the deserialized object was read from.
-        /// </summary>
-        public RowValue RawValues { get; private set; }
-
-        /// <summary>
-        /// The Exception which caused deserialization to fail.
-        /// </summary>
-        public AggregateException Exception { get; private set; }
-
-        /// <summary>
-        /// If true, the object deserialized successfully but failed validation.
-        /// UnvalidatedValue will contain the object.
-        /// </summary>
-        public bool HasUnvalidatedValue { get; private set; }
 
         /// <summary>
         /// A deserialized but unvalidated value.
@@ -121,9 +89,8 @@ namespace Ctl.Data
         /// <param name="rawValues">The raw row values which the deserialized object was read from.</param>
         /// <param name="exceptions">The errors which prevented an object from deserializing.</param>
         public ObjectValue(RowValue rawValues, IEnumerable<Exception> exceptions)
+            : base(rawValues, exceptions)
         {
-            RawValues = rawValues;
-            Exception = new AggregateException(exceptions).Flatten();
         }
 
         internal ObjectValue(RowValue rawValues, IEnumerable<ValidationResult> validationErrors, T value)
@@ -148,6 +115,62 @@ namespace Ctl.Data
             Exception = new AggregateException(new ValidationException(validationErrors, value, lineNumber, colNumber)).Flatten();
             UnvalidatedValue = value;
             HasUnvalidatedValue = true;
+        }
+    }
+
+    /// <summary>
+    /// A deserialized object value.
+    /// </summary>
+    public class ObjectValue
+    {
+        /// <summary>
+        /// The 1-based index of the row in the stream.
+        /// </summary>
+        public long RowNumber { get { return RawValues.RowNumber; } }
+
+        /// <summary>
+        /// The 1-based line index this value started on.
+        /// </summary>
+        public long LineNumber { get { return RawValues.Count != 0 ? RawValues[0].LineNumber : 0; } }
+
+        /// <summary>
+        /// The 1-based column index this value started on.
+        /// Note this counts UTF-16 code units, not grapheme clusters or even code points.
+        /// </summary>
+        public long ColumnNumber { get { return RawValues.Count != 0 ? RawValues[0].ColumnNumber : 0; } }
+
+        /// <summary>
+        /// The raw row values which the deserialized object was read from.
+        /// </summary>
+        public RowValue RawValues { get; protected set; }
+
+        /// <summary>
+        /// The Exception which caused deserialization to fail.
+        /// </summary>
+        public AggregateException Exception { get; protected set; }
+
+        /// <summary>
+        /// If true, the object deserialized successfully but failed validation.
+        /// UnvalidatedValue will contain the object.
+        /// </summary>
+        public bool HasUnvalidatedValue { get; protected set; }
+
+        /// <summary>
+        /// Instantiates a new ObjectValue.
+        /// </summary>
+        protected internal ObjectValue()
+        {
+        }
+
+        /// <summary>
+        /// Instantiates a new ObjectValue for a deserialization error.
+        /// </summary>
+        /// <param name="rawValues">The raw row values which the deserialized object was read from.</param>
+        /// <param name="exceptions">The errors which prevented an object from deserializing.</param>
+        protected internal ObjectValue(RowValue rawValues, IEnumerable<Exception> exceptions)
+        {
+            RawValues = rawValues;
+            Exception = new AggregateException(exceptions).Flatten();
         }
     }
 }
