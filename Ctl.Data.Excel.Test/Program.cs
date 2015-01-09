@@ -14,7 +14,7 @@ namespace Ctl.Data.Excel.Test
     {
         static void Main(string[] args)
         {
-            using (ExcelPackage pkg = new ExcelPackage(new FileInfo("Marsh R2_2014_Backer Tags - Copy.xlsx")))
+            using (ExcelPackage pkg = new ExcelPackage(new FileInfo("CTL CTL GC BACKER TAGS _Fall 2014.xlsx")))
             {
                 foreach (var ws in pkg.Workbook.Worksheets)
                 {
