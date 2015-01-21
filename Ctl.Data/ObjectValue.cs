@@ -22,10 +22,13 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
+using Ctl.Data.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -74,10 +77,12 @@ namespace Ctl.Data
         /// <summary>
         /// Instantiates a new ObjectValue.
         /// </summary>
+        /// <param name="memberIndexes">A list of member indexes.</param>
         /// <param name="rawValues">The raw row values which the deserialized object was read from.</param>
         /// <param name="value">The deserialized object.</param>
-        public ObjectValue(RowValue rawValues, T value)
+        public ObjectValue(CsvHeaderIndex[] memberIndexes, RowValue rawValues, T value)
         {
+            this.memberIndexes = memberIndexes;
             RawValues = rawValues;
             Value = value;
             HasUnvalidatedValue = true;
@@ -86,35 +91,66 @@ namespace Ctl.Data
         /// <summary>
         /// Instantiates a new ObjectValue for a deserialization error.
         /// </summary>
+        /// <param name="memberIndexes">A list of member indexes.</param>
         /// <param name="rawValues">The raw row values which the deserialized object was read from.</param>
         /// <param name="exceptions">The errors which prevented an object from deserializing.</param>
-        public ObjectValue(RowValue rawValues, IEnumerable<Exception> exceptions)
-            : base(rawValues, exceptions)
+        public ObjectValue(CsvHeaderIndex[] memberIndexes, RowValue rawValues, IEnumerable<Exception> exceptions)
+            : base(memberIndexes, rawValues, exceptions)
         {
         }
 
-        internal ObjectValue(RowValue rawValues, IEnumerable<ValidationResult> validationErrors, T value)
+        internal ObjectValue(CsvHeaderIndex[] memberIndexes, RowValue rawValues, IEnumerable<ValidationResult> validationErrors, T value)
         {
             long lineNumber = long.MaxValue, colNumber = 0;
 
-            foreach(var c in rawValues)
+            foreach (var c in rawValues)
             {
-                if(c.LineNumber < lineNumber)
+                if (c.LineNumber < lineNumber)
                 {
                     lineNumber = c.LineNumber;
                     colNumber = c.ColumnNumber;
                 }
             }
 
-            if(lineNumber == long.MaxValue)
+            if (lineNumber == long.MaxValue)
             {
                 lineNumber = 0;
             }
 
+            this.memberIndexes = memberIndexes;
             RawValues = rawValues;
             Exception = new AggregateException(new ValidationException(validationErrors, value, lineNumber, colNumber)).Flatten();
             UnvalidatedValue = value;
             HasUnvalidatedValue = true;
+        }
+
+        /// <summary>
+        /// Retrieves the column value for a specific member, if available.
+        /// </summary>
+        /// <typeparam name="TMember">The member's type.</typeparam>
+        /// <param name="memberAccess">An expression returning a property or field to get a column value for.</param>
+        /// <returns>The column value that would be mapped to that member.</returns>
+        public ColumnValue GetValueForMember<TMember>(Expression<Func<T, TMember>> memberAccess)
+        {
+            MemberExpression e = memberAccess.Body as MemberExpression;
+            if (e == null) throw new ArgumentException("Expression must be a MemberExpression", "memberAccess");
+
+            int memIdx;
+            if (!SerializedType<T>.MemberMap.TryGetValue(e.Member, out memIdx))
+            {
+                throw new ArgumentException(string.Format("Member '{0}' does not support deserialization.", e.Member.Name), "memberAccess");
+            }
+
+            foreach (CsvHeaderIndex idx in memberIndexes)
+            {
+                if (idx.MemberIndex == memIdx)
+                {
+                    int colIdx = idx.SerializedIndex;
+                    return colIdx < RawValues.Count ? RawValues[colIdx] : null;
+                }
+            }
+
+            return null;
         }
     }
 
@@ -123,6 +159,8 @@ namespace Ctl.Data
     /// </summary>
     public class ObjectValue
     {
+        protected CsvHeaderIndex[] memberIndexes;
+
         /// <summary>
         /// The 1-based index of the row in the stream.
         /// </summary>
@@ -165,10 +203,12 @@ namespace Ctl.Data
         /// <summary>
         /// Instantiates a new ObjectValue for a deserialization error.
         /// </summary>
+        /// <param name="memberIndexes">A list of member indexes.</param>
         /// <param name="rawValues">The raw row values which the deserialized object was read from.</param>
         /// <param name="exceptions">The errors which prevented an object from deserializing.</param>
-        protected internal ObjectValue(RowValue rawValues, IEnumerable<Exception> exceptions)
+        protected internal ObjectValue(CsvHeaderIndex[] memberIndexes, RowValue rawValues, IEnumerable<Exception> exceptions)
         {
+            this.memberIndexes = memberIndexes;
             RawValues = rawValues;
             Exception = new AggregateException(exceptions).Flatten();
         }

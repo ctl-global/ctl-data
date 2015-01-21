@@ -163,6 +163,20 @@ namespace Ctl.Data.Test
             });
         }
 
+        [Fact]
+        public void ReadCsvUnvalidatedColumns()
+        {
+            var reader = new CsvReader<CsvObject1>(new StringReader("Foo,Bar,Baz,Enum\n1234,56.7,890,Foo"));
+
+            ObjectValue<CsvObject1> x = reader.AsEnumerable().Single();
+
+            Assert.Equal("1234", x.GetValueForMember(y => y.Foo).Value);
+            Assert.Equal("56.7", x.GetValueForMember(y => y.Bar).Value);
+            Assert.Equal("890", x.GetValueForMember(y => y.Baz).Value);
+            Assert.Equal("Foo", x.GetValueForMember(y => y.Enum).Value);
+            Assert.Null(x.GetValueForMember(y => y.OptionalFormatted));
+        }
+
         static void Compare<T>(Func<CsvReader<T>> getReader, Action<ObjectValue<T>[]> testFunc)
         {
             var values = getReader().AsEnumerable().ToArray();

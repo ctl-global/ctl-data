@@ -113,6 +113,22 @@ namespace Ctl.Data.Infrastructure
             }
         }
 
+        static Dictionary<MemberInfo, int> memberMap;
+        public static Dictionary<MemberInfo, int> MemberMap
+        {
+            get
+            {
+                if (memberMap == null)
+                {
+                    memberMap = SerializedType.GetColumns(typeof(T))
+                        .Select((x, idx) => new { x, idx })
+                        .ToDictionary(x => x.x.MemberInfo, x => x.idx);
+                }
+
+                return memberMap;
+            }
+        }
+
         static Dictionary<string, int> readMap;
         public static Dictionary<string, int> ReadMap
         {

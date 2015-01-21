@@ -116,18 +116,18 @@ namespace Ctl.Data.Infrastructure
             };
 
             statements.Add(Expression.IfThen(Expression.NotEqual(Expression.Property(exceptions, "Count"), Expression.Constant(0)),
-                Expression.Return(returnTarget, Expression.New(returnType.GetConstructor(new[] { typeof(RowValue), typeof(IEnumerable<Exception>) }), valuesList, exceptions))
+                Expression.Return(returnTarget, Expression.New(returnType.GetConstructor(new[] { typeof(CsvHeaderIndex[]), typeof(RowValue), typeof(IEnumerable<Exception>) }), headersArray, valuesList, exceptions))
             ));
 
             if (validate && SerializedType.CanValidate(type))
             {
                 statements.Add(SerializedType.Validate(type, obj, errors));
                 statements.Add(Expression.IfThen(Expression.NotEqual(Expression.Property(errors, "Count"), Expression.Constant(0)),
-                    Expression.Return(returnTarget, Expression.New(returnType.GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic, null, new[] { typeof(RowValue), typeof(IEnumerable<ValidationResult>), type }, null), valuesList, errors, obj))
+                    Expression.Return(returnTarget, Expression.New(returnType.GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic, null, new[] { typeof(CsvHeaderIndex[]), typeof(RowValue), typeof(IEnumerable<ValidationResult>), type }, null), headersArray, valuesList, errors, obj))
                 ));
             }
 
-            statements.Add(Expression.Label(returnTarget, Expression.New(returnType.GetConstructor(new[] { typeof(RowValue), type }), valuesList, obj)));
+            statements.Add(Expression.Label(returnTarget, Expression.New(returnType.GetConstructor(new[] { typeof(CsvHeaderIndex[]), typeof(RowValue), type }), headersArray, valuesList, obj)));
 
             return Expression.Block(new[] { cv, obj, i, headersCount, valuesCount, sourceIdx, str }, statements);
         }
