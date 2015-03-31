@@ -111,8 +111,9 @@ namespace Ctl.Data.Excel
         int rowIdx = 1;
 
         /// <summary>
-        /// Initializes a new CsvWriter.
+        /// Initializes a new ExcelWriter.
         /// </summary>
+        /// <param name="worksheet">The worksheet to write to.</param>
         /// <param name="formatProvider">A format provider to use for any types which implement IFormattable.</param>
         /// <param name="writeHeaders">If true, headers will be written to the file. Otherwise, false.</param>
         /// <param name="validate">If true, validate objects to conform to their data annotations.</param>

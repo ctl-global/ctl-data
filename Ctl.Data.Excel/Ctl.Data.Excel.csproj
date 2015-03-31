@@ -33,12 +33,13 @@
     <DocumentationFile>bin\Release\Ctl.Data.Excel.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Ctl.Data">
-      <HintPath>..\packages\Ctl.Data.1.0.5423.38380\lib\net45\Ctl.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="EPPlus, Version=4.0.1.1, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
+    <Reference Include="Ctl.Data, Version=1.0.5568.23234, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\EPPlus.4.0.1.1\lib\net20\EPPlus.dll</HintPath>
+      <HintPath>..\packages\Ctl.Data.1.0.5568.23234\lib\net45\Ctl.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="EPPlus, Version=4.0.3.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\EPPlus.4.0.3\lib\net20\EPPlus.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -55,6 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ExcelColumnValue.cs" />
+    <Compile Include="ExcelObjectOptions.cs" />
     <Compile Include="ExcelReader.cs" />
     <Compile Include="ExcelRowValue.cs" />
     <Compile Include="ExcelWriter.cs" />

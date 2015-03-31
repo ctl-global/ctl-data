@@ -146,9 +146,22 @@ namespace Ctl.Data.Excel
         /// <param name="formatProvider">A format provider used to deserialize objects.</param>
         /// <param name="readHeader">If true, read a header. Otherwise, use column indexes.</param>
         /// <param name="validate">If true, validate objects to conform to their data annotations.</param>
+        [Obsolete("This constructor is obsolete. The overload taking a ExcelObjectOptions object should be used instead.")]
         public ExcelReader(ExcelWorksheet worksheet, IFormatProvider formatProvider = null, bool readHeader = true, bool validate = false)
-            : base(new ExcelReader(worksheet), formatProvider, validate, readHeader)
+            : this(worksheet, new ExcelObjectOptions { FormatProvider = formatProvider, ReadHeader = readHeader, Validate = validate })
         {
         }
+
+        /// <summary>
+        /// Initializes a new ExcelReader.
+        /// </summary>
+        /// <param name="worksheet">The worksheet to read from.</param>
+        /// <param name="options">A set of options to use. If not specified, defaults will be used.</param>
+        public ExcelReader(ExcelWorksheet worksheet, ExcelObjectOptions options)
+            : base(new ExcelReader(worksheet), (options ?? defOpts).FormatProvider, (options ?? defOpts).Validate, (options ?? defOpts).ReadHeader, (options ?? defOpts).HeaderComparer)
+        {
+        }
+
+        static readonly ExcelObjectOptions defOpts = new ExcelObjectOptions();
     }
 }
