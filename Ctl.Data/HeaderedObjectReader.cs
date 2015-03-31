@@ -41,6 +41,7 @@ namespace Ctl.Data
     /// <typeparam name="T">The type to read.</typeparam>
     public class HeaderedObjectReader<T> : ObjectReader<T>, IDataReader<T>
     {
+        readonly IEqualityComparer<string> headerComparer;
         readonly IDataReader reader;
         readonly bool validate;
 
@@ -52,9 +53,22 @@ namespace Ctl.Data
         /// <param name="readHeader">If true, read a header. Otherwise, use column indexes.</param>
         /// <param name="validate">If true, validate objects to conform to their data annotations.</param>
         public HeaderedObjectReader(IDataReader reader, IFormatProvider formatProvider, bool validate, bool readHeader)
+            : this(reader, formatProvider, validate, readHeader, null)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new HeaderedObjectReader.
+        /// </summary>
+        /// <param name="reader">The IDataReader to read from.</param>
+        /// <param name="formatProvider">A format provider used to deserialize objects.</param>
+        /// <param name="readHeader">If true, read a header. Otherwise, use column indexes.</param>
+        /// <param name="validate">If true, validate objects to conform to their data annotations.</param>
+        /// <param name="headerComparer">Used when comparing header values to property names. If null, the InvariantCultureIgnoreCase comparer will be used.</param>
+        public HeaderedObjectReader(IDataReader reader, IFormatProvider formatProvider, bool validate, bool readHeader, IEqualityComparer<string> headerComparer)
             : base(formatProvider, validate)
         {
-            if(reader == null) throw new ArgumentNullException("reader");
+            if (reader == null) throw new ArgumentNullException("reader");
             this.reader = reader;
             this.validate = validate;
 
@@ -62,6 +76,8 @@ namespace Ctl.Data
             {
                 headers = SerializedType<T>.HeaderlessIndexes;
             }
+
+            this.headerComparer = headerComparer;
         }
 
         /// <summary>

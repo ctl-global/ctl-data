@@ -48,6 +48,8 @@
   <ItemGroup>
     <Compile Include="AdditionalNamesAttribute.cs" />
     <Compile Include="BufferedWriter.cs" />
+    <Compile Include="CsvOptions.cs" />
+    <Compile Include="IgnoreSpacesComparer.cs" />
     <Compile Include="PositionAttribute.cs" />
     <Compile Include="ColumnValue.cs" />
     <Compile Include="Constants.cs" />

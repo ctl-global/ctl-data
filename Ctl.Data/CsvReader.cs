@@ -68,10 +68,10 @@ namespace Ctl.Data
         /// <param name="reader">The TextReader to read from.</param>
         /// <param name="separator">The column separator.</param>
         /// <param name="parseMidQuotes">If true, unescaped quotes in the middle of a quoted value are assumed to be part of the value. Otherwise, require strict escaping.</param>
+        [Obsolete("This constructor is obsolete. The overload taking a CsvOptions object should be used instead.")]
         public CsvReader(TextReader reader, char separator = ',', bool parseMidQuotes = false)
-            : this(reader, separator, parseMidQuotes, DefaultBufferLength)
+            : this(reader, new CsvOptions { Separator = separator, ParseMidQuotes = parseMidQuotes })
         {
-            if (reader == null) throw new ArgumentNullException("reader");
         }
 
         /// <summary>
@@ -81,9 +81,27 @@ namespace Ctl.Data
         /// <param name="separator">The column separator.</param>
         /// <param name="parseMidQuotes">If true, unescaped quotes in the middle of a quoted value are assumed to be part of the value. Otherwise, require strict escaping.</param>
         /// <param name="bufferLength">The buffer length to use while reading.</param>
+        [Obsolete("This constructor is obsolete. The overload taking a CsvOptions object should be used instead.")]
         public CsvReader(TextReader reader, char separator, bool parseMidQuotes, int bufferLength)
+            : this(reader, new CsvOptions { Separator = separator, ParseMidQuotes = parseMidQuotes, BufferLength = bufferLength })
+        {
+        }
+
+        /// <summary>
+        /// Instantiates a new CsvReader.
+        /// </summary>
+        /// <param name="reader">The TextReader to read from.</param>
+        /// <param name="options">Options to use when reading the file. If not specified, default options will be used.</param>
+        public CsvReader(TextReader reader, CsvOptions options)
         {
             if (reader == null) throw new ArgumentNullException("reader");
+
+            if (options == null)
+            {
+                options = new CsvOptions();
+            }
+
+            int bufferLength = options.BufferLength;
 
 #if DEBUG
             // at least 3 characters of lookahead are required.
@@ -95,8 +113,8 @@ namespace Ctl.Data
 
             this.reader = reader;
             this.buffer = new char[bufferLength];
-            this.separator = separator;
-            this.parseMidQuotes = parseMidQuotes;
+            this.separator = options.Separator;
+            this.parseMidQuotes = options.ParseMidQuotes;
         }
 
         /// <summary>
@@ -492,8 +510,9 @@ namespace Ctl.Data
         /// <param name="parseMidQuotes">If true, unescaped quotes in the middle of a quoted value are assumed to be part of the value. Otherwise, require strict escaping.</param>
         /// <param name="readHeader">If true, read a header. Otherwise, use column indexes.</param>
         /// <param name="validate">If true, validate objects to conform to their data annotations.</param>
+        [Obsolete("This constructor is obsolete. The overload taking a CsvObjectOptions object should be used instead.")]
         public CsvReader(TextReader reader, IFormatProvider formatProvider = null, char separator = ',', bool parseMidQuotes = false, bool readHeader = true, bool validate = false)
-            : this(reader, formatProvider, separator, parseMidQuotes, readHeader, validate, CsvReader.DefaultBufferLength)
+            : this(reader, new CsvObjectOptions { FormatProvider = formatProvider, Separator = separator, ParseMidQuotes = parseMidQuotes, ReadHeader = readHeader, Validate = validate })
         {
         }
 
@@ -507,9 +526,22 @@ namespace Ctl.Data
         /// <param name="readHeader">If true, read a header. Otherwise, use column indexes.</param>
         /// <param name="validate">If true, validate objects to conform to their data annotations.</param>
         /// <param name="bufferLength">The internal buffer length to use. Higher values will trade memory for performance.</param>
+        [Obsolete("This constructor is obsolete. The overload taking a CsvObjectOptions object should be used instead.")]
         public CsvReader(TextReader reader, IFormatProvider formatProvider, char separator, bool parseMidQuotes, bool readHeader, bool validate, int bufferLength)
-            : base(new CsvReader(reader, separator, parseMidQuotes, bufferLength), formatProvider, validate, readHeader)
+            : this(reader, new CsvObjectOptions { FormatProvider = formatProvider, Separator = separator, ParseMidQuotes = parseMidQuotes, ReadHeader = readHeader, Validate = validate, BufferLength = bufferLength })
         {
         }
+
+        /// <summary>
+        /// Initializes a new CsvReader.
+        /// </summary>
+        /// <param name="reader">The TextReader to read from.</param>
+        /// <param name="options">A set of options to use. If not specified, defaults will be used.</param>
+        public CsvReader(TextReader reader, CsvObjectOptions options)
+            : base(new CsvReader(reader, options), (options ?? defOpts).FormatProvider, (options ?? defOpts).Validate, (options ?? defOpts).ReadHeader, (options ?? defOpts).HeaderComparer)
+        {
+        }
+
+        static readonly CsvObjectOptions defOpts = new CsvObjectOptions();
     }
 }

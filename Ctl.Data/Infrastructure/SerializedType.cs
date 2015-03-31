@@ -136,25 +136,30 @@ namespace Ctl.Data.Infrastructure
             {
                 if (readMap == null)
                 {
-                    SerializedMember[] cols = SerializedType.GetColumns(typeof(T)).ToArray();
-
-                    Dictionary<string, int> newMap = new Dictionary<string, int>(cols.Length, StringComparer.InvariantCultureIgnoreCase);
-
-                    for (int i = 0; i < cols.Length; ++i)
-                    {
-                        string[] names = cols[i].Names;
-
-                        for (int j = 0; j < names.Length; ++j)
-                        {
-                            newMap[names[j]] = i;
-                        }
-                    }
-
-                    readMap = newMap;
+                    readMap = GetReadMap(null);
                 }
 
                 return readMap;
             }
+        }
+
+        static Dictionary<string, int> GetReadMap(IEqualityComparer<string> comparer)
+        {
+            SerializedMember[] cols = SerializedType.GetColumns(typeof(T)).ToArray();
+
+            Dictionary<string, int> newMap = new Dictionary<string, int>(cols.Length, comparer ?? StringComparer.InvariantCultureIgnoreCase);
+
+            for (int i = 0; i < cols.Length; ++i)
+            {
+                string[] names = cols[i].Names;
+
+                for (int j = 0; j < names.Length; ++j)
+                {
+                    newMap[names[j]] = i;
+                }
+            }
+
+            return newMap;
         }
 
         static CsvHeaderIndex[] headerlessIndexes;
@@ -186,27 +191,31 @@ namespace Ctl.Data.Infrastructure
             }
         }
 
-        public static CsvHeaderIndex[] GetHeaderIndexes(IEnumerable<string> headers)
+        public static CsvHeaderIndex[] GetHeaderIndexes(IEnumerable<string> headers, IEqualityComparer<string> comparer = null)
         {
             Debug.Assert(headers != null);
+
+            Dictionary<string, int> map = comparer == null ? ReadMap : GetReadMap(comparer);
 
             return headers.Select((x, idx) => new CsvHeaderIndex
             {
                 SerializedIndex = idx,
-                MemberIndex = x != null && ReadMap.ContainsKey(x) ? ReadMap[x] : -1
+                MemberIndex = x != null && map.ContainsKey(x) ? map[x] : -1
             })
             .Where(x => x.MemberIndex != -1)
             .ToArray();
         }
 
-        public static CsvHeaderIndex[] GetHeaderIndexes(IEnumerable<ColumnValue> headers)
+        public static CsvHeaderIndex[] GetHeaderIndexes(IEnumerable<ColumnValue> headers, IEqualityComparer<string> comparer = null)
         {
             Debug.Assert(headers != null);
+
+            Dictionary<string, int> map = comparer == null ? ReadMap : GetReadMap(comparer);
 
             return headers.Select((x, idx) => new CsvHeaderIndex
             {
                 SerializedIndex = idx,
-                MemberIndex = x != null && x.Value != null && ReadMap.ContainsKey(x.Value) ? ReadMap[x.Value] : -1
+                MemberIndex = x != null && x.Value != null && map.ContainsKey(x.Value) ? map[x.Value] : -1
             })
             .Where(x => x.MemberIndex != -1)
             .ToArray();
