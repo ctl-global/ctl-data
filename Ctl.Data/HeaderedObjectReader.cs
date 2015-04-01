@@ -163,7 +163,7 @@ namespace Ctl.Data
 
         void InitHeaders()
         {
-            headers = SerializedType<T>.GetHeaderIndexes(reader.CurrentRow);
+            headers = SerializedType<T>.GetHeaderIndexes(reader.CurrentRow, headerComparer);
 
             if (!validate) return;
 
@@ -183,7 +183,7 @@ namespace Ctl.Data
                 PropertyInfo pi = c.MemberInfo as PropertyInfo;
                 Type t = fi != null ? fi.FieldType : pi.PropertyType;
 
-                if (t.IsClass || Nullable.GetUnderlyingType(t) != null || c.Names.Intersect(reader.CurrentRow.Select(x => x.Value), StringComparer.InvariantCultureIgnoreCase).Any())
+                if (t.IsClass || Nullable.GetUnderlyingType(t) != null || c.Names.Intersect(reader.CurrentRow.Select(x => x.Value), headerComparer ?? StringComparer.InvariantCultureIgnoreCase).Any())
                 {
                     continue;
                 }
