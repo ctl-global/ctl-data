@@ -37,6 +37,8 @@ namespace Ctl.Data.Excel
     public class ExcelReader : IDataReader
     {
         readonly ExcelWorksheet worksheet;
+        readonly bool trimWhitespace;
+
         int pos;
         bool posSet = false;
         int prevRowSize = 0;
@@ -46,10 +48,21 @@ namespace Ctl.Data.Excel
         /// </summary>
         /// <param name="worksheet">The worksheet to read from.</param>
         public ExcelReader(ExcelWorksheet worksheet)
+            : this(worksheet, null)
+        {
+        }
+
+        /// <summary>
+        /// Instantiates a new ExcelReader.
+        /// </summary>
+        /// <param name="worksheet">The worksheet to read from.</param>
+        /// <param name="options">Options for reading the worksheet. If not specified, defaults will be used.</param>
+        public ExcelReader(ExcelWorksheet worksheet, ExcelOptions options)
         {
             if (worksheet == null) throw new ArgumentNullException("worksheet");
 
             this.worksheet = worksheet;
+            this.trimWhitespace = options != null && options.TrimWhitespace;
         }
 
         /// <summary>
@@ -112,6 +125,11 @@ namespace Ctl.Data.Excel
                     continue;
                 }
 
+                if (trimWhitespace)
+                {
+                    value = value.Trim();
+                }
+
                 int colNum = new ExcelAddress(cell.Address).Start.Column;
 
                 while (row.Count != (colNum - 1))
@@ -158,7 +176,7 @@ namespace Ctl.Data.Excel
         /// <param name="worksheet">The worksheet to read from.</param>
         /// <param name="options">A set of options to use. If not specified, defaults will be used.</param>
         public ExcelReader(ExcelWorksheet worksheet, ExcelObjectOptions options)
-            : base(new ExcelReader(worksheet), (options ?? defOpts).FormatProvider, (options ?? defOpts).Validate, (options ?? defOpts).ReadHeader, (options ?? defOpts).HeaderComparer)
+            : base(new ExcelReader(worksheet, options), (options ?? defOpts).FormatProvider, (options ?? defOpts).Validate, (options ?? defOpts).ReadHeader, (options ?? defOpts).HeaderComparer)
         {
         }
 

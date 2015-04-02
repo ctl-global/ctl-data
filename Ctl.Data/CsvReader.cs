@@ -48,7 +48,7 @@ namespace Ctl.Data
         readonly TextReader reader;
         readonly char[] buffer;
         readonly char separator;
-        readonly bool parseMidQuotes;
+        readonly bool parseMidQuotes, trimWhitespace;
 
         int position, length;
 
@@ -115,6 +115,7 @@ namespace Ctl.Data
             this.buffer = new char[bufferLength];
             this.separator = options.Separator;
             this.parseMidQuotes = options.ParseMidQuotes;
+            this.trimWhitespace = options.TrimWhitespace;
         }
 
         /// <summary>
@@ -310,8 +311,7 @@ namespace Ctl.Data
                             colNumber += idx - position + 1;
                             Take(idx - position, 1);
 
-                            items.Add(new ColumnValue(itemBuffer, startLineNumber + 1, startColNumber + 1));
-                            itemBuffer = null;
+                            AddCurrentItem();
 
                             state = ParseState.Begin;
                             goto case ParseState.Begin;
@@ -353,8 +353,7 @@ namespace Ctl.Data
                     }
 
                 haveRow:
-                    items.Add(new ColumnValue(itemBuffer, startLineNumber + 1, startColNumber + 1));
-                    itemBuffer = null;
+                    AddCurrentItem();
 
                     state = ParseState.Begin;
                     return ParseResult.Row;
@@ -409,8 +408,7 @@ namespace Ctl.Data
                             colNumber += 2;
                             Take(idx - position, 2);
 
-                            items.Add(new ColumnValue(itemBuffer, startLineNumber + 1, startColNumber + 1));
-                            itemBuffer = null;
+                            AddCurrentItem();
 
                             state = ParseState.Begin;
                             goto case ParseState.Begin;
@@ -459,6 +457,22 @@ namespace Ctl.Data
             }
 
             throw new ParseException("Parser reached a point it should never reach. Please report this bug!");
+        }
+
+        void AddCurrentItem()
+        {
+            if (trimWhitespace && itemBuffer != null)
+            {
+                itemBuffer = itemBuffer.Trim();
+
+                if (itemBuffer.Length == 0)
+                {
+                    itemBuffer = null;
+                }
+            }
+
+            items.Add(new ColumnValue(itemBuffer, startLineNumber + 1, startColNumber + 1));
+            itemBuffer = null;
         }
 
         void Take(int takeCount, int skipCount)
