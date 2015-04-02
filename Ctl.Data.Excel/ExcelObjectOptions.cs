@@ -54,12 +54,6 @@ namespace Ctl.Data.Excel
         /// </summary>
         public bool Validate { get; set; }
 
-        /// <summary>
-        /// If true, leading and trailing whitespace will be trimmed from column values.
-        /// Values consisting of only whitespace will be returned as null.
-        /// </summary>
-        public bool TrimWhitespace { get; set; }
-
         public ExcelObjectOptions()
         {
             FormatProvider = null;
