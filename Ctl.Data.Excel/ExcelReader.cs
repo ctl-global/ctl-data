@@ -38,6 +38,7 @@ namespace Ctl.Data.Excel
     {
         readonly ExcelWorksheet worksheet;
         readonly bool trimWhitespace;
+        readonly bool readFormatted;
 
         int pos;
         bool posSet = false;
@@ -62,7 +63,12 @@ namespace Ctl.Data.Excel
             if (worksheet == null) throw new ArgumentNullException("worksheet");
 
             this.worksheet = worksheet;
-            this.trimWhitespace = options != null && options.TrimWhitespace;
+
+            if (options != null)
+            {
+                this.trimWhitespace = options.TrimWhitespace;
+                this.readFormatted = options.ReadFormatted;
+            }
         }
 
         /// <summary>
@@ -118,7 +124,10 @@ namespace Ctl.Data.Excel
 
             foreach (var cell in range)
             {
-                string value = cell.Value != null ? cell.Value.ToString() : null;
+                string value =
+                    readFormatted ? cell.Text :
+                    cell.Value != null ? cell.Value.ToString() :
+                    null;
 
                 if (string.IsNullOrWhiteSpace(value))
                 {

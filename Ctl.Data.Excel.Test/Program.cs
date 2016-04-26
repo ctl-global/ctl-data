@@ -14,11 +14,20 @@ namespace Ctl.Data.Excel.Test
     {
         static void Main(string[] args)
         {
-            using (ExcelPackage pkg = new ExcelPackage(new FileInfo("CTL CTL GC BACKER TAGS _Fall 2014.xlsx")))
+            ExcelOptions opts = new ExcelOptions
+            {
+                TrimWhitespace = true,
+                ReadFormatted = true
+            };
+
+            using (ExcelPackage pkg = new ExcelPackage(new FileInfo("Book1.xlsx")))
             {
                 foreach (var ws in pkg.Workbook.Worksheets)
                 {
-                    Console.WriteLine("{0}: {1:N0}", ws.Name, new Ctl.Data.Excel.ExcelReader(ws).AsEnumerable().Count());
+                    foreach (var rv in new Ctl.Data.Excel.ExcelReader(ws, opts).AsEnumerable())
+                    {
+                        Console.WriteLine(rv[0].Value);
+                    }
                 }
             }
         }

@@ -39,5 +39,10 @@ namespace Ctl.Data.Excel
         /// Values consisting of only whitespace will be returned as null.
         /// </summary>
         public bool TrimWhitespace { get; set; }
+
+        /// <summary>
+        /// If true, numbers with formats defined are read in their formatted form.
+        /// </summary>
+        public bool ReadFormatted { get; set; }
     }
 }
