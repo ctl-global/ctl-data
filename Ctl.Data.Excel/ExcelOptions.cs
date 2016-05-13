@@ -23,6 +23,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -44,5 +45,10 @@ namespace Ctl.Data.Excel
         /// If true, numbers with formats defined are read in their formatted form.
         /// </summary>
         public bool ReadFormatted { get; set; }
+
+        /// <summary>
+        /// If set, numbers without formats will be formatted according to this culture.
+        /// </summary>
+        public IFormatProvider UnformattedFormat { get; set; }
     }
 }

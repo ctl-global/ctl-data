@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -17,17 +18,20 @@ namespace Ctl.Data.Excel.Test
             ExcelOptions opts = new ExcelOptions
             {
                 TrimWhitespace = true,
-                ReadFormatted = true
+                ReadFormatted = true,
+                UnformattedFormat = CultureInfo.InvariantCulture
             };
 
-            using (ExcelPackage pkg = new ExcelPackage(new FileInfo("Book1.xlsx")))
+            using (ExcelPackage pkg = new ExcelPackage(new FileInfo("test.xlsx")))
             {
-                foreach (var ws in pkg.Workbook.Worksheets)
+                var strings = from ws in pkg.Workbook.Worksheets
+                              from rv in new Ctl.Data.Excel.ExcelReader(ws, opts).AsEnumerable()
+                              from cv in rv
+                              select cv.Value;
+
+                foreach (var v in strings)
                 {
-                    foreach (var rv in new Ctl.Data.Excel.ExcelReader(ws, opts).AsEnumerable())
-                    {
-                        Console.WriteLine(rv[0].Value);
-                    }
+                    Console.WriteLine(v);
                 }
             }
         }

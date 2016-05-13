@@ -28,6 +28,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OfficeOpenXml;
+using System.Globalization;
 
 namespace Ctl.Data.Excel
 {
@@ -39,6 +40,7 @@ namespace Ctl.Data.Excel
         readonly ExcelWorksheet worksheet;
         readonly bool trimWhitespace;
         readonly bool readFormatted;
+        readonly IFormatProvider unformattedFormat;
 
         int pos;
         bool posSet = false;
@@ -68,6 +70,7 @@ namespace Ctl.Data.Excel
             {
                 this.trimWhitespace = options.TrimWhitespace;
                 this.readFormatted = options.ReadFormatted;
+                this.unformattedFormat = options.UnformattedFormat ?? CultureInfo.CurrentCulture;
             }
         }
 
@@ -94,6 +97,42 @@ namespace Ctl.Data.Excel
         {
             token.ThrowIfCancellationRequested();
             return Task.FromResult(TryRead());
+        }
+
+        string GetCellValue(ExcelRangeBase cell)
+        {
+            if (readFormatted && cell.Style?.Numberformat != null)
+            {
+                return cell.Text;
+            }
+
+            object val = cell.Value;
+            switch (Convert.GetTypeCode(val))
+            {
+                case TypeCode.Boolean:
+                    return Convert.ToBoolean(val).ToString(unformattedFormat);
+                case TypeCode.DateTime:
+                    return Convert.ToDateTime(val).ToString("O", unformattedFormat);
+                case TypeCode.Single:
+                    return Convert.ToSingle(val).ToString("R", unformattedFormat);
+                case TypeCode.Double:
+                    return Convert.ToDouble(val).ToString("R", unformattedFormat);
+                case TypeCode.Decimal:
+                    return Convert.ToDecimal(val).ToString(unformattedFormat);
+                case TypeCode.SByte:
+                case TypeCode.Int16:
+                case TypeCode.Int32:
+                case TypeCode.Int64:
+                    return Convert.ToInt64(val).ToString(unformattedFormat);
+                case TypeCode.Byte:
+                case TypeCode.UInt16:
+                case TypeCode.UInt32:
+                case TypeCode.UInt64:
+                    return Convert.ToUInt64(val).ToString(unformattedFormat);
+                default:
+                    if (val == null) return null;
+                    return Convert.ToString(val);
+            }
         }
 
         /// <summary>
@@ -124,10 +163,7 @@ namespace Ctl.Data.Excel
 
             foreach (var cell in range)
             {
-                string value =
-                    readFormatted ? cell.Text :
-                    cell.Value != null ? cell.Value.ToString() :
-                    null;
+                string value = GetCellValue(cell);
 
                 if (string.IsNullOrWhiteSpace(value))
                 {
