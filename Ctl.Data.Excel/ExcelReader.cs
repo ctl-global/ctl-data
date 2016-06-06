@@ -37,13 +37,12 @@ namespace Ctl.Data.Excel
     /// </summary>
     public class ExcelReader : IDataReader
     {
-        readonly ExcelWorksheet worksheet;
+        readonly ExcelRange range;
         readonly bool trimWhitespace;
         readonly bool readFormatted;
         readonly IFormatProvider unformattedFormat;
 
         int pos;
-        bool posSet = false;
         int prevRowSize = 0;
 
         /// <summary>
@@ -61,10 +60,40 @@ namespace Ctl.Data.Excel
         /// <param name="worksheet">The worksheet to read from.</param>
         /// <param name="options">Options for reading the worksheet. If not specified, defaults will be used.</param>
         public ExcelReader(ExcelWorksheet worksheet, ExcelOptions options)
+            : this(GetRange(worksheet), options)
         {
-            if (worksheet == null) throw new ArgumentNullException("worksheet");
+            if (worksheet == null) throw new ArgumentNullException(nameof(worksheet));
+        }
 
-            this.worksheet = worksheet;
+        static ExcelRange GetRange(ExcelWorksheet worksheet)
+        {
+            ExcelAddressBase dim = worksheet.Dimension;
+            if (dim == null) return null;
+
+            return worksheet.Cells[dim.Start.Row, dim.Start.Column, dim.End.Row, dim.End.Column];
+        }
+
+        /// <summary>
+        /// Instantiates a new ExcelReader.
+        /// </summary>
+        /// <param name="range">The range to read from.</param>
+        public ExcelReader(ExcelRange range)
+            : this(range, null)
+        {
+        }
+
+        /// <summary>
+        /// Instantiates a new ExcelReader.
+        /// </summary>
+        /// <param name="range">The range to read from.</param>
+        /// <param name="options">Options for reading the worksheet. If not specified, defaults will be used.</param>
+        public ExcelReader(ExcelRange range, ExcelOptions options)
+        {
+            if ((range?.Rows ?? 0) != 0)
+            {
+                this.range = range;
+                this.pos = range.Start.Row - 1;
+            }
 
             if (options != null)
             {
@@ -141,27 +170,20 @@ namespace Ctl.Data.Excel
         /// <returns>If a record was read, true. Otherwise, false to indicate an exhausted buffer, indicating ReadAsync() should be called again.</returns>
         public bool TryRead()
         {
-            if (!posSet)
-            {
-                if (worksheet.Dimension == null)
-                {
-                    return false;
-                }
-
-                pos = worksheet.Dimension.Start.Row - 1;
-                posSet = true;
-            }
-
-            if (++pos > worksheet.Dimension.End.Row)
+            if (range == null)
             {
                 return false;
             }
 
-            ExcelRange range = worksheet.Cells[pos, worksheet.Dimension.Start.Column, pos, worksheet.Dimension.End.Column];
+            if (++pos > range.End.Row)
+            {
+                return false;
+            }
 
-            ExcelRowValue row = new ExcelRowValue(prevRowSize, pos, range.Address);
+            ExcelRange rowRange = range[pos, range.Start.Column, pos, range.End.Column];
+            ExcelRowValue row = new ExcelRowValue(prevRowSize, pos, rowRange.Address);
 
-            foreach (var cell in range)
+            foreach (var cell in rowRange)
             {
                 string value = GetCellValue(cell);
 
