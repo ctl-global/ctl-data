@@ -24,8 +24,24 @@ namespace Ctl.Data.Excel.Test
 
             using (ExcelPackage pkg = new ExcelPackage(new FileInfo("test.xlsx")))
             {
-                var strings = from ws in pkg.Workbook.Worksheets
-                              from rv in new Ctl.Data.Excel.ExcelReader(ws, opts).AsEnumerable()
+                ExcelWorksheet sheet = pkg.Workbook.Worksheets.First();
+                ExcelAddressBase dim = sheet.Dimension;
+
+                if (dim == null)
+                {
+                    return;
+                }
+
+                int start = dim.Start.Row + 6;
+
+                if (start > dim.End.Row)
+                {
+                    return;
+                }
+
+                ExcelRange range = sheet.Cells[start, dim.Start.Column, dim.End.Row, dim.End.Column];
+                
+                var strings = from rv in new Ctl.Data.Excel.ExcelReader(range, opts).AsEnumerable()
                               from cv in rv
                               select cv.Value;
 

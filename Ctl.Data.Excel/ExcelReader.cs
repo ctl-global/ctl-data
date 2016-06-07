@@ -42,7 +42,7 @@ namespace Ctl.Data.Excel
         readonly bool readFormatted;
         readonly IFormatProvider unformattedFormat;
 
-        int pos;
+        int pos, endRow;
         int prevRowSize = 0;
 
         /// <summary>
@@ -93,6 +93,7 @@ namespace Ctl.Data.Excel
             {
                 this.range = range;
                 this.pos = range.Start.Row - 1;
+                this.endRow = range.End.Row;
             }
 
             if (options != null)
@@ -175,7 +176,7 @@ namespace Ctl.Data.Excel
                 return false;
             }
 
-            if (++pos > range.End.Row)
+            if (++pos > endRow)
             {
                 return false;
             }
@@ -244,6 +245,16 @@ namespace Ctl.Data.Excel
         /// <param name="options">A set of options to use. If not specified, defaults will be used.</param>
         public ExcelReader(ExcelWorksheet worksheet, ExcelObjectOptions options)
             : base(new ExcelReader(worksheet, options), (options ?? defOpts).FormatProvider, (options ?? defOpts).Validate, (options ?? defOpts).ReadHeader, (options ?? defOpts).HeaderComparer)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new ExcelReader.
+        /// </summary>
+        /// <param name="range">The range to read from.</param>
+        /// <param name="options">A set of options to use. If not specified, defaults will be used.</param>
+        public ExcelReader(ExcelRange range, ExcelObjectOptions options)
+            : base(new ExcelReader(range, options), (options ?? defOpts).FormatProvider, (options ?? defOpts).Validate, (options ?? defOpts).ReadHeader, (options ?? defOpts).HeaderComparer)
         {
         }
 
