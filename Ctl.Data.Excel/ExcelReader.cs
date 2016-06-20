@@ -89,18 +89,40 @@ namespace Ctl.Data.Excel
         /// <param name="options">Options for reading the worksheet. If not specified, defaults will be used.</param>
         public ExcelReader(ExcelRange range, ExcelOptions options)
         {
-            if ((range?.Rows ?? 0) != 0)
-            {
-                this.range = range;
-                this.pos = range.Start.Row - 1;
-                this.endRow = range.End.Row;
-            }
-
             if (options != null)
             {
                 this.trimWhitespace = options.TrimWhitespace;
                 this.readFormatted = options.ReadFormatted;
                 this.unformattedFormat = options.UnformattedFormat ?? CultureInfo.CurrentCulture;
+            }
+
+            if ((range?.Rows ?? 0) != 0)
+            {
+                this.range = range;
+                this.pos = range.Start.Row - 1;
+                this.endRow = range.End.Row;
+
+                if (options?.TrimTrailingRows != false)
+                {
+                    while(endRow > pos)
+                    {
+                        ExcelRange rowRange = range[endRow, range.Start.Column, endRow, range.End.Column];
+                        bool isWhite = true;
+
+                        foreach (var cell in rowRange)
+                        {
+                            string v = GetCellValue(cell);
+                            if (!string.IsNullOrWhiteSpace(v))
+                            {
+                                isWhite = false;
+                                break;
+                            }
+                        }
+
+                        if (!isWhite) break;
+                        --endRow;
+                    }
+                }
             }
         }
 

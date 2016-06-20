@@ -50,5 +50,10 @@ namespace Ctl.Data.Excel
         /// If set, numbers without formats will be formatted according to this culture.
         /// </summary>
         public IFormatProvider UnformattedFormat { get; set; }
+
+        /// <summary>
+        /// If true, rows at the end of the document with nothing but whitespace will be trimmed from the results.
+        /// </summary>
+        public bool TrimTrailingRows { get; set; } = true;
     }
 }
