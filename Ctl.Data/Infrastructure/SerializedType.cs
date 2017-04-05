@@ -272,7 +272,7 @@ namespace Ctl.Data.Infrastructure
                               IsReadOnly = (x is PropertyInfo && ((PropertyInfo)x).SetMethod == null),
                               IsRequired = x.GetCustomAttribute<RequiredAttribute>() != null
                           }
-                          orderby ret.IndexedPosition, ret.FixedPosition, ret.Order, ret.Names.First()
+                          orderby ret.IndexedPosition, ret.FixedPosition, ret.Order, ret.MemberInfo.MetadataToken
                           select ret;
 
             int startIndexed = -1;
