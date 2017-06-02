@@ -9,11 +9,17 @@
     <Company>CTL Global, Inc.</Company>
     <Product>Ctl.Data</Product>
     <Copyright>Copyright © CTL Global, Inc. 2014</Copyright>
+    <Authors>CTL Global, Inc.</Authors>
 
     <PackageIconUrl>http://ctl-global.github.io/ctl-logo-nuget.png</PackageIconUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageTags>ctl csv fixed width data</PackageTags>
-    <PackageVersion>2.0.0.0</PackageVersion>
+    <PackageVersion>2.0.0.2</PackageVersion>
+
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/ctl-global/ctl-data</RepositoryUrl>
+    <PackageProjectUrl>http://ctl-global.github.io/data.html</PackageProjectUrl>
+    <PackageLicenseUrl>https://opensource.org/licenses/BSD-2-Clause</PackageLicenseUrl>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System.ComponentModel.DataAnnotations" Condition=" '$(TargetFramework)' == 'net45' " />
@@ -23,5 +29,8 @@
     <PackageReference Include="System.Reflection.TypeExtensions" Version="4.3.0" Condition=" '$(TargetFramework)' != 'net45' " />
 
     <PackageReference Include="System.Interactive.Async" Version="3.1.1" />
+
+    <!-- Workaround for https://github.com/NuGet/Home/issues/4853 -->
+    <PackageReference Include="NuGet.Build.Tasks.Pack" Version="4.3.0-preview1-4045" PrivateAssets="All" />
   </ItemGroup>
 </Project>
