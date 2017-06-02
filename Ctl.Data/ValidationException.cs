@@ -28,16 +28,21 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+
+#if NET45 || NETSTANDARD2_0
+using System.Runtime.Serialization;
+#endif
 
 namespace Ctl.Data
 {
     /// <summary>
     /// An exception thrown when an object doesn't pass validation.
     /// </summary>
+#if NET45 || NETSTANDARD2_0
     [Serializable]
+#endif
     public class ValidationException : ParseException
     {
         /// <summary>
@@ -74,6 +79,7 @@ namespace Ctl.Data
             Object = obj;
         }
 
+#if NET45 || NETSTANDARD2_0
         /// <summary>
         /// Instantiates a new ValidationException from a serialized instance.
         /// </summary>
@@ -106,5 +112,6 @@ namespace Ctl.Data
 
             public List<string> MemberNames { get; set; }
         }
+#endif
     }
 }

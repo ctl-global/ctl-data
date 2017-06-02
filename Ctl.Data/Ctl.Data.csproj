@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net45</TargetFrameworks>
+    <TargetFrameworks>netstandard1.5;net45</TargetFrameworks>
 
     <AssemblyVersion>2.0</AssemblyVersion>
     <FileVersion>2.0</FileVersion>
@@ -16,9 +16,12 @@
     <PackageVersion>2.0.0.0</PackageVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="System.Interactive.Async" Version="3.1.1"/>
+    <Reference Include="System.ComponentModel.DataAnnotations" Condition=" '$(TargetFramework)' == 'net45' " />
+
+    <PackageReference Include="System.ComponentModel.Primitives" Version="4.3.0" Condition=" '$(TargetFramework)' != 'net45' " />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="4.3.0" Condition=" '$(TargetFramework)' != 'net45' " />
+    <PackageReference Include="System.Reflection.TypeExtensions" Version="4.3.0" Condition=" '$(TargetFramework)' != 'net45' " />
+
+    <PackageReference Include="System.Interactive.Async" Version="3.1.1" />
   </ItemGroup>
 </Project>

@@ -33,7 +33,9 @@ namespace Ctl.Data
     /// <summary>
     /// An exception resulting from parsing a file.
     /// </summary>
+#if NET45 || NETSTANDARD2_0
     [Serializable]
+#endif
     public class ParseException : Exception
     {
         /// <summary>
@@ -89,6 +91,7 @@ namespace Ctl.Data
             LineNumber = lineNumber;
         }
 
+#if NET45 || NETSTANDARD2_0
         /// <summary>
         /// Instantiates a new ParseException from a serialized instance.
         /// </summary>
@@ -114,5 +117,6 @@ namespace Ctl.Data
             info.AddValue("ColumnNumber", ColumnNumber);
             info.AddValue("LineNumber", LineNumber);
         }
+#endif
     }
 }

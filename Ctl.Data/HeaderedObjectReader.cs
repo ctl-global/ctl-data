@@ -183,7 +183,7 @@ namespace Ctl.Data
                 PropertyInfo pi = c.MemberInfo as PropertyInfo;
                 Type t = fi != null ? fi.FieldType : pi.PropertyType;
 
-                if (t.IsClass || Nullable.GetUnderlyingType(t) != null || c.Names.Intersect(reader.CurrentRow.Select(x => x.Value), headerComparer ?? StringComparer.InvariantCultureIgnoreCase).Any())
+                if (t.GetTypeInfo().IsClass || Nullable.GetUnderlyingType(t) != null || c.Names.Intersect(reader.CurrentRow.Select(x => x.Value), headerComparer ?? StringComparer.OrdinalIgnoreCase).Any())
                 {
                     continue;
                 }

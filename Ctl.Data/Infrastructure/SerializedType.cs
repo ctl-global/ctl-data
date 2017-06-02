@@ -147,7 +147,7 @@ namespace Ctl.Data.Infrastructure
         {
             SerializedMember[] cols = SerializedType.GetColumns(typeof(T)).ToArray();
 
-            Dictionary<string, int> newMap = new Dictionary<string, int>(cols.Length, comparer ?? StringComparer.InvariantCultureIgnoreCase);
+            Dictionary<string, int> newMap = new Dictionary<string, int>(cols.Length, comparer ?? StringComparer.OrdinalIgnoreCase);
 
             for (int i = 0; i < cols.Length; ++i)
             {
