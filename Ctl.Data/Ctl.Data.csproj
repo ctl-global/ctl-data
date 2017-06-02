@@ -1,100 +1,24 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{DC619AB5-3489-4D3E-B5F7-7E08DEA156E8}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Ctl.Data</RootNamespace>
-    <AssemblyName>Ctl.Data</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
-    <RestorePackages>true</RestorePackages>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\Ctl.Data.XML</DocumentationFile>
+    <TargetFrameworks>net45</TargetFrameworks>
+
+    <AssemblyVersion>2.0</AssemblyVersion>
+    <FileVersion>2.0</FileVersion>
+    <AssemblyTitle>Ctl.Data</AssemblyTitle>
+    <Description>Readers and writers for CSV and fixed-length file formats. Supports both synchronous and asynchronous operation, data annotations, and wicked fast object serialization.</Description>
+    <Company>CTL Global, Inc.</Company>
+    <Product>Ctl.Data</Product>
+    <Copyright>Copyright © CTL Global, Inc. 2014</Copyright>
+
+    <PackageIconUrl>http://ctl-global.github.io/ctl-logo-nuget.png</PackageIconUrl>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageTags>ctl csv fixed width data</PackageTags>
+    <PackageVersion>2.0.0.0</PackageVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Interactive.Async, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Ix-Async.1.2.3\lib\net45\System.Interactive.Async.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AdditionalNamesAttribute.cs" />
-    <Compile Include="BufferedWriter.cs" />
-    <Compile Include="CsvOptions.cs" />
-    <Compile Include="IgnoreSpacesComparer.cs" />
-    <Compile Include="PositionAttribute.cs" />
-    <Compile Include="ColumnValue.cs" />
-    <Compile Include="Constants.cs" />
-    <Compile Include="Infrastructure\CsvHeaderIndex.cs" />
-    <Compile Include="CsvReader.cs" />
-    <Compile Include="CsvWriter.cs" />
-    <Compile Include="DataFormatAttribute.cs" />
-    <Compile Include="FixedAttribute.cs" />
-    <Compile Include="FixedPosition.cs" />
-    <Compile Include="FixedReader.cs" />
-    <Compile Include="FixedWriter.cs" />
-    <Compile Include="Formats.cs" />
-    <Compile Include="HeaderedObjectReader.cs" />
-    <Compile Include="IDataReader.cs" />
-    <Compile Include="IDataWriter.cs" />
-    <Compile Include="ObjectReader.cs" />
-    <Compile Include="ObjectValue.cs" />
-    <Compile Include="ParseException.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RowValue.cs" />
-    <Compile Include="SerializationException.cs" />
-    <Compile Include="Infrastructure\SerializedMember.cs" />
-    <Compile Include="Infrastructure\SerializedType.cs" />
-    <Compile Include="Infrastructure\SerializedType.Deserialize.cs" />
-    <Compile Include="Infrastructure\SerializedType.Serialize.cs" />
-    <Compile Include="ValidationException.cs" />
+    <PackageReference Include="System.Interactive.Async" Version="3.1.1"/>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="Ctl.Data.nuspec" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
-  </Target>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>
