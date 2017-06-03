@@ -67,7 +67,7 @@ namespace Ctl.Data
             {
                 if (filePath == null) throw new ArgumentNullException("filePath");
 
-                using (StreamReader sr = new StreamReader(filePath))
+                using (StreamReader sr = OpenSyncReader(filePath))
                 {
                     IDataReader reader = OpenRead(sr);
                     while (reader.Read())
@@ -81,7 +81,7 @@ namespace Ctl.Data
             {
                 if (filePath == null) throw new ArgumentNullException("filePath");
 
-                using (StreamReader sr = new StreamReader(filePath, encoding))
+                using (StreamReader sr = OpenSyncReader(filePath, encoding))
                 {
                     IDataReader reader = OpenRead(sr);
                     while (reader.Read())
@@ -102,7 +102,7 @@ namespace Ctl.Data
             {
                 if (filePath == null) throw new ArgumentNullException("filePath");
 
-                using (StreamReader sr = new StreamReader(filePath))
+                using (StreamReader sr = OpenSyncReader(filePath))
                 {
                     IDataReader<T> reader = OpenRead<T>(sr, formatProvider, validate);
                     while (reader.Read())
@@ -116,7 +116,7 @@ namespace Ctl.Data
             {
                 if (filePath == null) throw new ArgumentNullException("filePath");
 
-                using (StreamReader sr = new StreamReader(filePath, encoding))
+                using (StreamReader sr = OpenSyncReader(filePath, encoding))
                 {
                     IDataReader<T> reader = OpenRead<T>(sr, formatProvider, validate);
                     while (reader.Read())
@@ -217,6 +217,22 @@ namespace Ctl.Data
                 return ReadObjectValuesAsync<T>(textReader, formatProvider, validate).Select(x => x.Value);
             }
 
+            static StreamReader OpenSyncReader(string filePath)
+            {
+                Debug.Assert(filePath != null);
+
+                FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.SequentialScan);
+                return new StreamReader(fs);
+            }
+
+            static StreamReader OpenSyncReader(string filePath, Encoding encoding)
+            {
+                Debug.Assert(filePath != null);
+
+                FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.SequentialScan);
+                return new StreamReader(fs, encoding);
+            }
+
             static StreamReader OpenAsyncReader(string filePath)
             {
                 Debug.Assert(filePath != null);
@@ -238,7 +254,7 @@ namespace Ctl.Data
                 if (filePath == null) throw new ArgumentNullException("filePath");
                 if (records == null) throw new ArgumentNullException("records");
 
-                using (StreamWriter sw = new StreamWriter(filePath))
+                using (StreamWriter sw = OpenSyncWriter(filePath))
                 {
                     Write(sw, records);
                 }
@@ -249,7 +265,7 @@ namespace Ctl.Data
                 if (filePath == null) throw new ArgumentNullException("filePath");
                 if (records == null) throw new ArgumentNullException("records");
 
-                using (StreamWriter sw = new StreamWriter(filePath, false, encoding))
+                using (StreamWriter sw = OpenSyncWriter(filePath, encoding))
                 {
                     Write(sw, records);
                 }
@@ -336,7 +352,7 @@ namespace Ctl.Data
                 if (filePath == null) throw new ArgumentNullException("filePath");
                 if (items == null) throw new ArgumentNullException("items");
 
-                using (StreamWriter sw = new StreamWriter(filePath))
+                using (StreamWriter sw = OpenSyncWriter(filePath))
                 {
                     Write(sw, items, formatProvider, validate);
                 }
@@ -347,7 +363,7 @@ namespace Ctl.Data
                 if (filePath == null) throw new ArgumentNullException("filePath");
                 if (items == null) throw new ArgumentNullException("items");
 
-                using (StreamWriter sw = new StreamWriter(filePath, false, encoding))
+                using (StreamWriter sw = OpenSyncWriter(filePath, encoding))
                 {
                     Write(sw, items, formatProvider, validate);
                 }
@@ -430,11 +446,27 @@ namespace Ctl.Data
                 await dw.FlushAsync(token).ConfigureAwait(false);
             }
 
+            static StreamWriter OpenSyncWriter(string filePath)
+            {
+                Debug.Assert(filePath != null);
+
+                FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None, 4096, FileOptions.SequentialScan);
+                return new StreamWriter(fs);
+            }
+
+            static StreamWriter OpenSyncWriter(string filePath, Encoding encoding)
+            {
+                Debug.Assert(filePath != null);
+
+                FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None, 4096, FileOptions.SequentialScan);
+                return new StreamWriter(fs, encoding);
+            }
+
             static StreamWriter OpenAsyncWriter(string filePath)
             {
                 Debug.Assert(filePath != null);
 
-                FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.Read, 4096, FileOptions.Asynchronous | FileOptions.SequentialScan);
+                FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None, 4096, FileOptions.Asynchronous | FileOptions.SequentialScan);
                 return new StreamWriter(fs);
             }
 
@@ -442,7 +474,7 @@ namespace Ctl.Data
             {
                 Debug.Assert(filePath != null);
 
-                FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.Read, 4096, FileOptions.Asynchronous | FileOptions.SequentialScan);
+                FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None, 4096, FileOptions.Asynchronous | FileOptions.SequentialScan);
                 return new StreamWriter(fs, encoding);
             }
 

@@ -34,7 +34,9 @@ namespace Ctl.Data
     /// <summary>
     /// An exception resulting from deserializing a value.
     /// </summary>
+#if NET45 || NETSTANDARD2_0
     [Serializable]
+#endif
     public class SerializationException : ParseException
     {
         /// <summary>
@@ -78,6 +80,7 @@ namespace Ctl.Data
             InvalidValue = invalidValue;
         }
 
+#if NET45 || NETSTANDARD2_0
         /// <summary>
         /// Instantiates a new SerializationException from a serialized instance.
         /// </summary>
@@ -103,5 +106,6 @@ namespace Ctl.Data
             info.AddValue("MemberName", MemberName, typeof(string));
             info.AddValue("InvalidValue", InvalidValue, typeof(string));
         }
+#endif
     }
 }

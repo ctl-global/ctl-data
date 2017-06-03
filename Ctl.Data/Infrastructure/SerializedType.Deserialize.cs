@@ -123,7 +123,7 @@ namespace Ctl.Data.Infrastructure
             {
                 statements.Add(SerializedType.Validate(type, obj, errors));
                 statements.Add(Expression.IfThen(Expression.NotEqual(Expression.Property(errors, "Count"), Expression.Constant(0)),
-                    Expression.Return(returnTarget, Expression.New(returnType.GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic, null, new[] { typeof(CsvHeaderIndex[]), typeof(RowValue), typeof(IEnumerable<ValidationResult>), type }, null), headersArray, valuesList, errors, obj))
+                    Expression.Return(returnTarget, Expression.New(returnType.GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic, new[] { typeof(CsvHeaderIndex[]), typeof(RowValue), typeof(IEnumerable<ValidationResult>), type }), headersArray, valuesList, errors, obj))
                 ));
             }
 
@@ -178,7 +178,7 @@ namespace Ctl.Data.Infrastructure
 
                 parse = srcString;
             }
-            else if (dstType.IsClass)
+            else if (dstType.GetTypeInfo().IsClass)
             {
                 // Parsing a reference type.
 
@@ -220,7 +220,7 @@ namespace Ctl.Data.Infrastructure
 
             MethodInfo method;
 
-            if (dstType.IsEnum)
+            if (dstType.GetTypeInfo().IsEnum)
             {
                 method = typeof(Enum).GetMethod("Parse", new[] { typeof(Type), typeof(string) });
                 return Expression.Convert(Expression.Call(method, Expression.Constant(dstType), srcString), dstType);

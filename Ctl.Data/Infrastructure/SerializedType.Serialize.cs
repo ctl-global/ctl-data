@@ -96,7 +96,7 @@ namespace Ctl.Data.Infrastructure
 
             // for a reference type.
 
-            if (srcObject.Type.IsClass)
+            if (srcObject.Type.GetTypeInfo().IsClass)
             {
                 return Expression.Condition(
                     Expression.NotEqual(srcObject, Expression.Constant(null, srcObject.Type)),
