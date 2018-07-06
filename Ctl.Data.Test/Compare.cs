@@ -20,13 +20,22 @@ namespace Ctl.Data.Test
 
         static void CompareCsv(string data, bool parseMidQuotes, int bufferLength, ColumnValue[][] values)
         {
+            CompareCsv(data, new CsvOptions
+            {
+                ParseMidQuotes = parseMidQuotes,
+                BufferLength = bufferLength
+            }, values);
+        }
+
+        static void CompareCsv(string data, CsvOptions opts, ColumnValue[][] values)
+        {
             ColumnValue[][] readValues;
 
             // using Read.
 
             using (TextReader reader = new StringReader(data))
             {
-                CsvReader csv = new CsvReader(reader, ',', parseMidQuotes, bufferLength);
+                CsvReader csv = new CsvReader(reader, opts);
                 readValues = csv.AsEnumerable().Select(x => x.ToArray()).ToArray();
             }
 
@@ -36,7 +45,7 @@ namespace Ctl.Data.Test
 
             using (TextReader reader = new StringReader(data))
             {
-                CsvReader csv = new CsvReader(reader, ',', parseMidQuotes, bufferLength);
+                CsvReader csv = new CsvReader(reader, opts);
                 readValues = csv.AsAsyncEnumerable().Select(x => x.ToArray()).ToArray().Result;
             }
 

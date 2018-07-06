@@ -212,5 +212,17 @@ namespace Ctl.Data.Test
             Assert.Equal(ex.LineNumber, 1);
             Assert.Equal(ex.ColumnNumber, 5);
         }
+
+        [Fact]
+        public void ReadCsvTrimmed()
+        {
+            CompareCsv("\"foo bar   \"", new CsvOptions { TrimWhitespace = true }, new[]
+            {
+                new[]
+                {
+                    new ColumnValue { LineNumber = 1, ColumnNumber = 1, Value = "foo bar" }
+                }
+            });
+        }
     }
 }
