@@ -10,13 +10,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{73C597
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ctl.Data", "Ctl.Data\Ctl.Data.csproj", "{DC619AB5-3489-4D3E-B5F7-7E08DEA156E8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ctl.Data", "Ctl.Data\Ctl.Data.csproj", "{DC619AB5-3489-4D3E-B5F7-7E08DEA156E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ctl.Data.Excel", "Ctl.Data.Excel\Ctl.Data.Excel.csproj", "{2E97D0FD-39DC-424B-A663-E579D471B9CA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ctl.Data.Excel", "Ctl.Data.Excel\Ctl.Data.Excel.csproj", "{2E97D0FD-39DC-424B-A663-E579D471B9CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ctl.Data.Test", "Ctl.Data.Test\Ctl.Data.Test.csproj", "{7752A390-8A9B-4B08-A0C9-117C8913989F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ctl.Data.Test", "Ctl.Data.Test\Ctl.Data.Test.csproj", "{7752A390-8A9B-4B08-A0C9-117C8913989F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsvBenchmark", "CsvBenchmark\CsvBenchmark.csproj", "{C40A2910-CBB6-46AA-B313-5FF53BB52F61}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CsvBenchmark", "CsvBenchmark\CsvBenchmark.csproj", "{C40A2910-CBB6-46AA-B313-5FF53BB52F61}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,5 +43,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D96759FC-324A-4005-9694-93CC80A5DC28}
 	EndGlobalSection
 EndGlobal

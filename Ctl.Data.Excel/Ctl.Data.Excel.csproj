@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net45</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
 
     <AssemblyVersion>2.0</AssemblyVersion>
     <FileVersion>2.0</FileVersion>
@@ -20,12 +20,14 @@
     <RepositoryUrl>https://github.com/ctl-global/ctl-data</RepositoryUrl>
     <PackageProjectUrl>http://ctl-global.github.io/data.html</PackageProjectUrl>
     <PackageLicenseUrl>https://opensource.org/licenses/BSD-2-Clause</PackageLicenseUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Ctl.Data" Version="2.0.0.2" />
-    <PackageReference Include="EPPlus" Version="4.1.0" />
+    <ProjectReference Include="..\Ctl.Data\Ctl.Data.csproj" />
+    <PackageReference Include="EPPlus" Version="4.5.2.1" />
 
-    <!-- Workaround for https://github.com/NuGet/Home/issues/4853 -->
-    <PackageReference Include="NuGet.Build.Tasks.Pack" Version="4.3.0-preview1-4045" PrivateAssets="All" />
+
+    <Reference Include="System.ComponentModel.DataAnnotations" Condition=" '$(TargetFramework)' == 'net45' " />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="4.3.0" Condition=" '$(TargetFramework)' != 'net45' " />
   </ItemGroup>
 </Project>
